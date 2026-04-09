@@ -1,1 +1,50 @@
-node
+#basic code
+node {
+    stage('Build') {
+        echo 'Building...'
+    }
+    stage('Test') {
+        echo 'Testing...'
+    }
+    stage('Deploy') {
+        echo 'Deploying...'
+    }
+}
+
+# with choice parameters 
+
+node {
+    // // we can use ui method also or else write here in code
+    // // Correct way to define parameters in Scripted pipeline
+    // properties([
+    //     parameters([
+    //         choice(
+    //             name: 'action',
+    //             choices: ['apply', 'destroy'],
+    //             description: 'Choose the Terraform action to perform'
+    //         )
+    //     ])
+    // ])
+
+    stage('Preparation') {
+        git branch: 'main', url: 'https://github.com/Abinash003A/terraform-by-veera.git'
+    }
+
+    stage('Init') {
+        dir('Day-1-Terraform-basic') {
+            sh 'terraform init'
+        }
+    }
+
+    stage('Plan') {
+        dir('Day-1-Terraform-basic') {
+            sh 'terraform plan'
+        }
+    }
+
+    stage('Execute') {
+        dir('Day-1-Terraform-basic') {
+            sh "terraform ${params.action} -auto-approve"
+        }
+    }
+}
